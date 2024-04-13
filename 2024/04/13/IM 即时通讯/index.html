@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>浅谈IM | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="现代IM系统中聊天消息的同步和存储方案探讨 - 知乎 (zhihu.com) 浅谈IM系统中离线消息、历史消息的最佳实践 IM系统中最核心的部分是消息系统，消息系统中最核心的功能是消息的同步和存储：  1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的同步。消息同步系统最重要的衡量指标就是消息传递的实时性、完整性以及能支撑的消息规模。从功能上来说，一般至少要支持在线和离线推送，高">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈IM">
+<meta property="og:url" content="http://example.com/2024/04/13/IM%20%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="现代IM系统中聊天消息的同步和存储方案探讨 - 知乎 (zhihu.com) 浅谈IM系统中离线消息、历史消息的最佳实践 IM系统中最核心的部分是消息系统，消息系统中最核心的功能是消息的同步和存储：  1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的同步。消息同步系统最重要的衡量指标就是消息传递的实时性、完整性以及能支撑的消息规模。从功能上来说，一般至少要支持在线和离线推送，高">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-1d017c8056c86516484ca676235cfaf8_1440w.webp">
+<meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/121745zz6wuvgwubgbc2w7.png">
+<meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png">
+<meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/140340fo7uttmu88ulkou4.png">
+<meta property="article:published_time" content="2024-04-13T11:14:16.335Z">
+<meta property="article:modified_time" content="2024-04-12T13:20:56.791Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-1d017c8056c86516484ca676235cfaf8_1440w.webp">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-IM 即时通讯" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/13/IM%20%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" class="article-date">
+  <time class="dt-published" datetime="2024-04-13T11:14:16.335Z" itemprop="datePublished">2024-04-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/IM/">IM</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      浅谈IM
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31377253">现代IM系统中聊天消息的同步和存储方案探讨 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.52im.net/thread-3887-1-1.html"><strong>浅谈IM系统中离线消息、历史消息的最佳实践</strong></a></p>
+<p><strong>IM系统中最核心的部分是消息系统，消息系统中最核心的功能是消息的同步和存储：</strong></p>
+<blockquote>
+<p><strong>1）消息的同步：</strong>将消息完整的、快速的从发送方传递到接收方，就是消息的同步。消息同步系统最重要的衡量指标就是消息传递的实时性、完整性以及能支撑的消息规模。从功能上来说，一般至少要支持在线和离线推送，高级的IM系统还支持『多端同步』；<br><strong>2）消息的存储：</strong>消息存储即消息的持久化保存，这里不是指消息在客户端本地的保存，而是指云端的保存，功能上对应的就是『消息漫游』。『消息漫游』的好处是可以实现账号在任意端登陆查看所有历史消息，这也是高级IM系统特有的功能之一。</p>
+</blockquote>
+<h2 id="架构设计"><a href="#架构设计" class="headerlink" title="架构设计"></a>架构设计<img src="https://pic1.zhimg.com/80/v2-1d017c8056c86516484ca676235cfaf8_1440w.webp" alt="img"></h2><p><strong>传统架构下，消息是先同步后存储：</strong></p>
+<blockquote>
+<p>对于在线的用户，消息会直接实时同步到在线的接收方，消息同步成功后，并不会进行持久化。而对于离线的用户或者消息无法实时同步成功时，消息会持久化到离线库，当接收方重新连接后，会从离线库拉取所有未读消息。当离线库中的消息成功同步到接收方后，消息会从离线库中删除。传统的消息系统，服务端的主要工作是维护发送方和接收方的连接状态，并提供在线消息同步和离线消息缓存的能力，保证消息一定能够从发送方传递到接收方。服务端不会对消息进行持久化，所以也无法支持消息漫游。</p>
+</blockquote>
+<p><strong>现代架构下，消息是先存储后同步：</strong></p>
+<blockquote>
+<p>先存储后同步的好处是，如果接收方确认接收到了消息，那这条消息一定是已经在云端保存了。并且消息会有两个库来保存，一个是消息存储库，用于全量保存所有会话的消息，主要用于支持消息漫游。另一个是消息同步库，主要用于接收方的多端同步。<br>消息从发送方发出后，经过服务端转发，服务端会先将消息保存到消息存储库，后保存到消息同步库。完成消息的持久化保存后，对于在线的接收方，会直接选择在线推送。但在线推送并不是一个必须路径，只是一个更优的消息传递路径。<br>对于在线推送失败或者离线的接收方，会有另外一个统一的消息同步方式。接收方会主动的向服务端拉取所有未同步消息，但接收方何时来同步以及会在哪些端来同步消息对服务端来说是未知的，所以要求服务端必须保存所有需要同步到接收方的消息，这是消息同步库的主要作用。对于新的同步设备，会有消息漫游的需求，这是消息存储库的主要作用，在消息存储库中，可以拉取任意会话的全量历史消息。</p>
+</blockquote>
+<h2 id="1、IM消息投递的一般做法"><a href="#1、IM消息投递的一般做法" class="headerlink" title="1、IM消息投递的一般做法"></a>1、IM消息投递的一般做法</h2><p>在通常的IM消息系统中，对于实时消息、离线消息、历史消息大概都是下面这样的技术思路。</p>
+<p><strong>对于在线用户：</strong>消息会直接实时发送到在线的接收方，消息发送完成后，服务器端并不会对消息进行落地存储。</p>
+<p><strong>而对于离线的用户：</strong>服务器端会将消息存入到离线库，当用户登录后，从离线库中将离线消息拉走，然后服务器端将离线消息删除。</p>
+<p>这样实现的缺点就是消息不持久化，导致消息无法支持消息漫游，降低了消息的可靠性。</p>
+<p>（<strong>PS：</strong>实际上，这其实也不能算是缺点，因为一些场景下存储历史消息并不是必须的，所谓的消息漫游能力也不是必备的，比如微信。）</p>
+<p>而在我们设计的消息系统中，服务器只要接收到了发送方发上来的消息，在转发给接收方的同时也会在离线数据库及历史消息库中进行消息的落地存储，而历史消息的落地也就能支持消息漫游等相关功能了。</p>
+<h2 id="2、什么是离线消息和历史消息？"><a href="#2、什么是离线消息和历史消息？" class="headerlink" title="2、什么是离线消息和历史消息？"></a>2、什么是离线消息和历史消息？</h2><p>关于离线消息和历史消息，在技术上，我们是这样定义。</p>
+<p><strong>1）离线消息：</strong></p>
+<p>离线消息就是用户（即接收方）在离线过程中收到的消息，这些消息大多是用户比较关心的消息，具有一定的时效性。</p>
+<p>以我们的系统经验来说，我们的离线消息默认只保存最近七天的消息。</p>
+<p>用户（即接收方）在下次登录后会全量获取这些离线消息，然后在客户端根据聊天会话进行离线消息的UI展示（比如显示一个未读消息气泡等）。</p>
+<p>（<strong>PS：</strong>用户离线的可能性在技术上其实是由很多种情况组成的，比如对方不在线、对方网络断掉了、对方手机崩溃了、服务器发送时出错了等等，严格来讲——只要无法实时发送成的消息，都算“离线消息”。）</p>
+<p><strong>2）历史消息：</strong></p>
+<p>历史消息存储了用户所有的聊天消息，这些消息包括发出的消息以及接收到的消息。</p>
+<p>在客户端获取历史消息时，通常是按照会话进行分页获取的。</p>
+<p>以我们的系统经验来说，历史消息的存储时间我们设计默认为半年，当然这个时间可以按实际的产品运营规则来定，没有硬性规定。</p>
+<h2 id="3、IM消息的发送及存储流程"><a href="#3、IM消息的发送及存储流程" class="headerlink" title="3、IM消息的发送及存储流程"></a>3、IM消息的发送及存储流程</h2><p><strong>以下是我们系统整体的消息发送及存储流程：</strong></p>
+<p><img src="http://www.52im.net/data/attachment/forum/202204/18/121745zz6wuvgwubgbc2w7.png" alt="IM开发干货分享：浅谈IM系统中离线消息、历史消息的最佳实践_1.png"></p>
+<h2 id="6、IM离线消息、历史消息在存储逻辑上的区别-扩散写-扩散读"><a href="#6、IM离线消息、历史消息在存储逻辑上的区别-扩散写-扩散读" class="headerlink" title="6、IM离线消息、历史消息在存储逻辑上的区别(扩散写 扩散读)"></a>6、IM离线消息、历史消息在存储逻辑上的区别(扩散写 扩散读)</h2><h3 id="6-1概述"><a href="#6-1概述" class="headerlink" title="6.1概述"></a>6.1概述</h3><p><strong>通过上面的图中能清晰的看到：</strong></p>
+<ul>
+<li><em><strong>1）</strong></em>离线消息我们存储介质选用的是 <a target="_blank" rel="noopener" href="https://redis.io/">Redis</a>；</li>
+<li><em><strong>2）</strong></em>历史消息我们选用的是 <a target="_blank" rel="noopener" href="https://hbase.apache.org/">HBase</a>。</li>
+</ul>
+<p>对于为什么选用不同的存储介质，其实我们考虑的是离线消息和历史消息不同的业务场景和读写模式。</p>
+<p>下面我们重点介绍一下离线消息和历史消息存储的区别。</p>
+<h3 id="6-2离线消息存储模式——“扩散写”"><a href="#6-2离线消息存储模式——“扩散写”" class="headerlink" title="6.2离线消息存储模式——“扩散写”"></a>6.2离线消息存储模式——“扩散写”</h3><p>离线消息的存储模式我们用的是扩散写。</p>
+<p><img src="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png" alt="IM开发干货分享：浅谈IM系统中离线消息、历史消息的最佳实践_2.png"></p>
+<p><strong>如上图所示：</strong>每个用户都有自己单独的收件箱和发件箱：</p>
+<ul>
+<li><em><strong>1）</strong></em>收件箱存放的是需要向这个接收端同步的所有消息；</li>
+<li><em><strong>2）</strong></em>发件箱里存放的是发送端发出的所有消息。<br><strong>以单聊为例：</strong>聊天中的两人会话中，消息会产生两次写，即发送者的发件箱和接收端的收件箱。</li>
+</ul>
+<p><strong>而在群的场景下：</strong>写入会被更加的放大（扩散），如果群里有 N 个人，那一条群消息就会被扩散写 N 次。</p>
+<p><strong>小结一下：</strong></p>
+<ul>
+<li><strong>1）</strong>扩散写的优点是：接收端的逻辑会非常清晰简单，只需要从收件箱里读取一次即可，大大降低了同步消息所需的读的压力；</li>
+<li><em>2）</em>扩散写的缺点是：写入会被成指数地放大，特别是针对群这种场景。</li>
+</ul>
+<h3 id="6-3历史消息存储模式——“扩散读”"><a href="#6-3历史消息存储模式——“扩散读”" class="headerlink" title="6.3历史消息存储模式——“扩散读”"></a>6.3历史消息存储模式——“扩散读”</h3><p>历史消息的存储模式我们用的是扩散读。</p>
+<p>因为历史消息中，每个会话都保存了整个会话的全量消息。<strong>在扩散读这种模式下，每个会话的消息只保存一次</strong>。</p>
+<p><strong>对比扩散写模式，扩散读的优点和缺点如下：</strong></p>
+<ul>
+<li>***1）***优点是：写入次数大大降低，特别是针对群消息，只需要存一次即可；</li>
+<li>***2）***缺点是：接收端接收消息非常的复杂和低效，因为这种模式客户端想拉取到所有消息就只能每个会话同步一次，读就会被放大，而且可能会产生很多次无效的读，因为有些会话可能根本没有新消息。</li>
+</ul>
+<p><img src="http://www.52im.net/data/attachment/forum/202204/18/140340fo7uttmu88ulkou4.png" alt="IM开发干货分享：浅谈IM系统中离线消息、历史消息的最佳实践_3.png"></p>
+<h3 id="6-4小结"><a href="#6-4小结" class="headerlink" title="6.4小结"></a>6.4小结</h3><p>在 IM 这种应用场景下，通常会用到扩散写这种消息同步模型，一条消息产生一条，但是可能会被读多次，是<strong>典型的读多写少的场景</strong>。</p>
+<p>一个优化好的IM系统，必须从设计上平衡读写压力，避免读或者写任意一个维度达到天花板。</p>
+<p>当然扩散写这种模式也有其弊端，比如万人群，会导致一条消息，写入了一万次。</p>
+<p><strong>综合来讲：</strong>我们需要根据自己的业务场景做相应设计选择，以我们的IM系统为例，就是是根据了离线和历史消息的不同场景选择了写扩散和读扩散的组合模式。适合的才是最好的，没有必要死搬硬套理论。</p>
+<h1 id="具体实现-寻航聊天功能"><a href="#具体实现-寻航聊天功能" class="headerlink" title="具体实现 :寻航聊天功能"></a>具体实现 :寻航聊天功能</h1><h2 id="消息存储："><a href="#消息存储：" class="headerlink" title="消息存储："></a>消息存储：</h2><p>所有消息存在mysql 做持久化</p>
+<h3 id="离线消息-Redis"><a href="#离线消息-Redis" class="headerlink" title="离线消息 Redis"></a>离线消息 Redis</h3><p>每个用户设置一个收件箱  zset 按时间排序</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/04/13/IM%20%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" data-id="cluy01xth0000sgs9g50x8s8m" data-title="浅谈IM" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/04/13/my-new-post/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">my new post</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/IM/">IM</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/04/13/IM%20%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/">浅谈IM</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/13/my-new-post/">my new post</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/13/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
