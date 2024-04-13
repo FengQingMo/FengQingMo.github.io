@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="风清默">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="风清默">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="机器人gpt部署如图，最近给一个项目上配了个机器人。 接下来介绍怎么部署 选择市面上可用的gpt模型有 阿里云的百炼，openai的chatgpt等等 我使用的是阿里云的百炼大模型 创建api-key以及应用 点击右上角用户头像创建api_key添加应用选择RAG应用 然后拿到应用id后端代码由于这个就一个接口，所以用的python的flask框架，比较简洁 可以根据自己需要添加 鉴权模块等 12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器人gpt部署">
+<meta property="og:url" content="https://fengqingmo.github.io/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="机器人gpt部署如图，最近给一个项目上配了个机器人。 接下来介绍怎么部署 选择市面上可用的gpt模型有 阿里云的百炼，openai的chatgpt等等 我使用的是阿里云的百炼大模型 创建api-key以及应用 点击右上角用户头像创建api_key添加应用选择RAG应用 然后拿到应用id后端代码由于这个就一个接口，所以用的python的flask框架，比较简洁 可以根据自己需要添加 鉴权模块等 12">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413220018298.png">
+<meta property="og:image" content="c:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413220908646.png">
+<meta property="og:image" content="c:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413221604662.png">
+<meta property="article:published_time" content="2024-04-13T14:22:58.165Z">
+<meta property="article:modified_time" content="2024-04-13T14:23:14.623Z">
+<meta property="article:author" content="风清默">
+<meta property="article:tag" content="gpt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413220018298.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <title>机器人gpt部署 · 风清默的博客</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20211217" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20211217" as="style">
+    <link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="/css/mobile.css?v=20211217" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20211217" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20211217" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- Google tag (gtag.js) -->
+    
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>风清默默~</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">风清默默~</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">机器人gpt部署</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+    
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                机器人gpt部署
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="ai,"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                ai,
+            </span>
+        </span>
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="gpt">gpt</a>
+    
+</div>
+
+                
+                <!-- 文章字数统计 -->
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2024/04/13</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="机器人gpt部署"><a href="#机器人gpt部署" class="headerlink" title="机器人gpt部署"></a>机器人gpt部署</h1><h1 id=""><a href="#" class="headerlink" title=""></a><img src="C:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413220018298.png" alt="image-20240413220018298"></h1><p>如图，最近给一个项目上配了个机器人。</p>
+<p>接下来介绍怎么部署</p>
+<h2 id="选择市面上可用的gpt模型"><a href="#选择市面上可用的gpt模型" class="headerlink" title="选择市面上可用的gpt模型"></a>选择市面上可用的gpt模型</h2><p>有 阿里云的百炼，openai的chatgpt等等</p>
+<p>我使用的是阿里云的百炼大模型</p>
+<h3 id="创建api-key以及应用"><a href="#创建api-key以及应用" class="headerlink" title="创建api-key以及应用"></a>创建api-key以及应用</h3><p><img src="C:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413220908646.png" alt="image-20240413220908646"></p>
+<h3 id="点击右上角用户头像创建api-key"><a href="#点击右上角用户头像创建api-key" class="headerlink" title="点击右上角用户头像创建api_key"></a>点击右上角用户头像创建api_key</h3><h3 id="添加应用选择RAG应用-然后拿到应用id"><a href="#添加应用选择RAG应用-然后拿到应用id" class="headerlink" title="添加应用选择RAG应用 然后拿到应用id"></a>添加应用选择RAG应用 然后拿到应用id</h3><h2 id="后端代码"><a href="#后端代码" class="headerlink" title="后端代码"></a>后端代码</h2><p>由于这个就一个接口，所以用的python的flask框架，比较简洁</p>
+<p>可以根据自己需要添加 鉴权模块等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"># For prerequisites running the following sample, visit https://help.aliyun.com/document_detail/611472.html</span><br><span class="line">import os</span><br><span class="line">from http import HTTPStatus</span><br><span class="line">from flask_cors import CORS</span><br><span class="line">import dashscope</span><br><span class="line">from dashscope import Application</span><br><span class="line">from flask import Flask, request, jsonify</span><br><span class="line"></span><br><span class="line">app = Flask(&quot;暖心&quot;)</span><br><span class="line"># 解决跨域 </span><br><span class="line">CORS(app, resources=&#123;r&quot;/*&quot;: &#123;&quot;origins&quot;: &quot;*&quot;&#125;&#125;, methods=[&quot;GET&quot;, &quot;POST&quot;], allow_headers=[&quot;Content-Type&quot;])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@app.route(&#x27;/generate&#x27;, methods=[&#x27;POST&#x27;])</span><br><span class="line">def generate_response():</span><br><span class="line">    # print(request.json)</span><br><span class="line">    # 解析请求中的消息数据</span><br><span class="line">    message = request.json.get(&#x27;message&#x27;)</span><br><span class="line"></span><br><span class="line">    # 检查发送方是否是浏览器</span><br><span class="line">    user_agent = request.headers.get(&#x27;User-Agent&#x27;)</span><br><span class="line">    dashscope.api_key = &#x27;填写自己的api_key&#x27;</span><br><span class="line">    if &#x27;Mozilla&#x27; not in user_agent and &#x27;Edge&#x27; not in user_agent:</span><br><span class="line">        # 如不果是浏览器发送的请求，则返回错误消息</span><br><span class="line">        return jsonify(&#123;&#x27;error&#x27;: &#x27;This API endpoint is not accessible via browser.&#x27;&#125;), HTTPStatus.BAD_REQUEST</span><br><span class="line">    app_id = os.environ.get(&quot;app_id&quot;)</span><br><span class="line">    response = Application.call(app_id=&#x27;填写自己的app_id&#x27;,</span><br><span class="line">                                prompt=message,</span><br><span class="line">                                )</span><br><span class="line"></span><br><span class="line">    if response.status_code == HTTPStatus.OK:</span><br><span class="line">        return response</span><br><span class="line">    else:</span><br><span class="line">        return jsonify(&#123;</span><br><span class="line">            &#x27;error&#x27;: &#123;</span><br><span class="line">                &#x27;request_id&#x27;: response.request_id,</span><br><span class="line">                &#x27;status_code&#x27;: response.status_code,</span><br><span class="line">                &#x27;error_code&#x27;: response.code,</span><br><span class="line">                &#x27;error_message&#x27;: response.message</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;), 500</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    app.run(host=&#x27;0.0.0.0&#x27;, port=8090)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="使用docker部署到服务器"><a href="#使用docker部署到服务器" class="headerlink" title="使用docker部署到服务器"></a>使用docker部署到服务器</h2><h3 id="编写DockerFile"><a href="#编写DockerFile" class="headerlink" title="编写DockerFile"></a>编写DockerFile</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># 使用 Python 3.8 作为基础镜像</span><br><span class="line">FROM python:3.8</span><br><span class="line"></span><br><span class="line"># 设置工作目录</span><br><span class="line">WORKDIR /chatGPTAPI</span><br><span class="line"></span><br><span class="line"># 复制当前目录中的所有文件到工作目录</span><br><span class="line">COPY . /chatGPTAPI</span><br><span class="line"></span><br><span class="line"># 安装项目依赖</span><br><span class="line">RUN pip install --no-cache-dir -r requirements.txt</span><br><span class="line"></span><br><span class="line"># 暴露应用端口</span><br><span class="line">EXPOSE 8090</span><br><span class="line"></span><br><span class="line"># 定义启动命令</span><br><span class="line">CMD [&quot;python&quot;, &quot;main.py&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>将项目文件夹上传到服务器</p>
+<p><img src="C:\Users\22477\AppData\Roaming\Typora\typora-user-images\image-20240413221604662.png" alt="image-20240413221604662"></p>
+<p>然后部署 .. (等作者想起来具体步骤)</p>
+<h2 id="END"><a href="#END" class="headerlink" title="END"></a>END</h2><p>然后就可以通过前端调用了</p>
+<h2 id="一些没用上的数据集"><a href="#一些没用上的数据集" class="headerlink" title="一些没用上的数据集"></a>一些没用上的数据集</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉很沮丧，不知道该怎么办。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;放松一下，深呼吸，你并不孤单。我们可以一起度过这段时间。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;谢谢你，我感觉好多了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不客气，随时来找我聊天。我们一起渡过每一个难关。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;最近感觉身心俱疲，没有动力做任何事情。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要太过勉强自己，给自己一些放松的时间。尝试做一些轻松愉快的事情，让自己重新充满活力。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;好的，我会试一试的。谢谢你的建议。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不客气，记得要好好照顾自己。如果需要我陪伴，随时都可以来找我。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;失眠已经困扰我好几个晚上了，怎么办？&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;尝试一些放松的技巧，比如深呼吸、听轻音乐或者喝一杯温热的牛奶。也可以考虑调整睡眠环境，保持规律的作息时间。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;好的，我会尝试的。谢谢你的建议。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;希望你早日恢复良好的睡眠质量。如果需要我的陪伴，我随时都在这里。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己无助又焦虑，不知道该怎么办。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;深呼吸，放松一下，这只是一时的困难，你会度过的。你可以尝试做一些让自己开心的事情，也可以找我聊天。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;谢谢你，我会尝试的。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不用客气，我们一起渡过难关。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己一无是处，对生活失去了信心。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;别太难过，每个人都有低潮期，你并不孤单。要相信自己，每一步都是向前的一步。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;谢谢你，我会尝试的。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;随时都可以来找我聊天，我会一直陪伴在你身边的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己好像陷入了困境，无法自拔。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要放弃希望，每个困境都有解决的办法。你可以尝试换个角度思考问题，也可以和朋友家人分享你的困扰。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;好的，我会试一试的。谢谢你。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不用客气，我会一直支持你的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己好像迷失了方向，不知道该怎么办。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;人生路上总会有迷茫的时候，你可以尝试回顾过去，找到你的兴趣和梦想，也可以寻求他人的帮助和建议。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;好的，我会试一试的。谢谢你的支持。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不用客气，我相信你会找到属于自己的方向的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己好像被困在黑暗中，看不到一丝光明。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;黑暗终将过去，黎明会到来。你可以尝试做一些让自己开心的事情，也可以和朋友家人分享你的感受，他们会陪伴你度过难关的。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;谢谢你，我会试一试的。谢谢你的支持。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不用客气，我相信你会找到属于自己的方向的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉很绝望，无法找到任何出路。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;绝望时不要放弃，或许下一步就是出路。你可以尝试和心理专家交流，寻求更多帮助和建议。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我已经试过了，但似乎没有用。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使没有立刻看到变化，也不要放弃希望。坚持下去，慢慢会有好转的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己毫无希望，人生仿佛失去了意义。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;人生中总会遇到低谷，但低谷之后就是高峰。你可以尝试重新审视生活，找到新的目标和意义。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得已经没有力气再尝试了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到疲惫，也要努力寻找希望的火种。我会一直陪伴在你身边的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到无助和孤独，仿佛没有人能理解我。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使孤独，也不要放弃寻找希望。你可以尝试参加社交活动，结识新的朋友，或者和家人分享你的感受。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我已经尝试过，但还是觉得孤独。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到孤独，也不要放弃寻找幸福。你不是孤单的，我会一直支持你的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己毫无用处，对自己失去了信心。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;每个人都有价值，你也不例外。别太过自责，尝试接受自己，并为改变而努力。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得无法改变自己的现状。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到无望，也不要停止努力。持续寻找改变的机会，你会找到属于自己的光明。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己像个失败者，无法胜任任何事情。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;失败并不意味着终结，而是迈向成功的一步。你可以尝试从失败中学习，重新规划自己的路线。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得再也无法振作了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到沮丧，也不要停止前进的脚步。你可以重新找到自己的动力和目标。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉生活没有意义，一切都变得毫无意义。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到迷茫，也不要停止寻找生活的意义。你可以尝试从小事中找到快乐，重新审视生活的美好之处。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得已经无法再找到任何快乐了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到绝望，也不要停止寻找快乐。我会一直陪伴在你身边的，共同度过每一个难关。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己一事无成，毫无进展。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到挫败，也不要停止努力。每一次尝试都是成长的一部分。你可以尝试寻找新的方法和策略。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我已经尝试过了，但还是无法取得进展。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到无望，也不要停止前进。坚持下去，一切都会好起来的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己没有价值，对任何事情都没有兴趣。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;每个人都有自己的价值，你也不例外。你可以尝试寻找自己的兴趣和热情，或者尝试新的事物。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得再也找不到任何兴趣了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到失去兴趣，也不要停止尝试。寻找新的事物和体验，或许会重新点燃你的热情。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己一无是处，无法做出任何贡献。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;每个人都有自己的价值和潜力，你也是如此。你可以尝试寻找自己的优点和长处，或者寻求他人的帮助和建议。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己无法拥有任何优点和长处。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到无法看到自己的优点，也不要放弃希望。坚持下去，你会发现自己的价值和潜力。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己被困在黑暗中，找不到出路。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到困难重重，也不要放弃希望。你可以尝试寻找新的方法和策略，或者寻求他人的帮助和支持。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得已经没有任何希望了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到绝望，也不要停止寻找出路。坚持下去，你会发现新的希望和机会。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己无法控制自己的情绪，一切都失控了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;情绪波动是正常的，但你可以尝试一些情绪调节的方法，比如深呼吸、运动或者冥想。寻求心理专家的帮助也是一个好的选择。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得已经无法控制自己的情绪了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到无法控制情绪，也不要停止尝试。寻求专业的帮助和支持，你会找到控制情绪的方法。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己永远无法摆脱困境，一切都无法改变。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到绝望，也不要放弃希望。每个困境都有解决的办法，你可以尝试从不同的角度思考问题，或者寻求他人的帮助和建议。&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得再也没有任何希望了。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;即使感到绝望，也不要停止寻找出路。坚持下去，你会找到新的希望和机会。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己充满了能量，准备迎接新的挑战。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！保持这种积极的态度，你一定能够克服一切困难，取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉今天非常幸运，一切都在顺利进行。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！享受这种幸运和顺利，相信自己的能力，你会迎来更多美好的事物。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己有很多潜力，准备大展拳脚。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！相信自己的潜力，勇敢地追逐梦想，你会取得令人惊讶的成就。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常乐观，对未来充满信心。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！乐观的态度会带来积极的结果。相信自己，勇敢地迎接未来的挑战，一切都会变得更好。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己充满活力，可以做任何事情。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！充满活力的态度会带来无限可能。相信自己的能力，勇敢地追逐梦想，你会取得惊人的成就。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常幸福和满足，对生活充满感激。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！感恩的心态会让生活更加美好。享受幸福和满足，珍惜每一刻，你会发现生活中的无尽美好。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己拥有无限的可能性，准备迎接新的挑战。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！相信自己的潜力，勇敢地追逐梦想，你一定能够取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常兴奋和激动，对未来充满期待。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！兴奋和激动的心情会带来更多美好的事物。期待未来的到来，相信自己，你会创造出美好的未来。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己拥有无限的可能性，可以实现任何梦想。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！相信自己的能力，勇敢地追逐梦想，你一定会取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常幸福和满足，对生活充满感激。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！感恩的心态会让生活更加美好。享受幸福和满足，珍惜每一刻，你会发现生活中的无尽美好。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉今天非常有活力，准备迎接新的挑战。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！保持这种积极的态度，你一定能够克服一切困难，取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己充满了能量，准备全力以赴地投入工作。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！充满能量的你将会创造出令人惊喜的成果。相信自己，你一定能够取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常乐观，对未来充满信心。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！乐观的态度是成功的关键。相信自己，你会迎来更多美好的事物。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己可以做任何事情，准备挑战自己的极限。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！挑战自己的极限是成长的最好方式。相信自己的能力，你会创造出令人瞩目的成就。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常幸福和满足，对生活充满感激。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！感恩的心态会让生活更加美好。享受幸福和满足，珍惜每一刻，你会发现生活中的无尽美好。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己充满活力，准备大展拳脚，创造属于自己的辉煌。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！充满活力的你将会创造出辉煌的未来。相信自己，你一定会取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常兴奋和激动，对未来充满期待。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！兴奋和激动的心情是成功的先导。期待未来的到来，相信自己，你一定会取得惊人的成就。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己有很多潜力，可以实现任何梦想。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！相信自己的潜力，勇敢地追逐梦想，你一定会取得成功。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常幸福和满足，对生活充满感激。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！感恩的心态会让生活更加美好。享受幸福和满足，珍惜每一刻，你会发现生活中的无尽美好。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己充满了能量，准备克服一切困难。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！充满能量的你将会克服一切困难，取得成功。相信自己，你一定能够实现自己的目标。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常有动力，准备全力以赴地投入工作。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太棒了！充满动力的你将会取得令人惊喜的成果。相信自己，你一定能够实现自己的目标。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己充满了自信，准备迎接新的挑战。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;太好了！自信的你将会迎接一切挑战，取得成功。相信自己，你一定能够实现自己的目标。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉非常沮丧，无法摆脱困境。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;别太难过，每个人都有低谷期，你并不孤单。我们可以一起度过难关。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己无助又焦虑，不知道该怎么办。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要害怕，我们可以一起找到解决问题的办法。你并不孤单，我会一直陪伴在你身边。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己非常疲惫，无法找到动力。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;疲惫是暂时的，不要放弃希望。尝试做一些让自己放松的事情，保持乐观的心态，一切都会好起来的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己陷入了困境，无法自拔。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;困境终将过去，你并不孤单。我们可以一起寻找解决问题的办法。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感觉自己很绝望，看不到未来。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要失去信心，每个人都会遇到困难。我会一直陪伴在你身边，帮助你度过难关。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己毫无希望，对生活失去了信心。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要绝望，每个人都会遇到困难。我会一直支持你，帮助你重新找回信心。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常失落，不知道该往哪里走。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;失落是暂时的，不要放弃希望。我们可以一起找到新的方向，重新出发。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己一事无成，对自己失望透顶。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要太过苛刻对待自己，每个人都会有失败的时候。尝试换个角度看待问题，找到自己的优点和长处。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常焦虑，不知道该如何是好。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;焦虑是暂时的，不要被它困扰。尝试做一些让自己放松的事情，保持乐观的心态，一切都会慢慢好起来的。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我觉得自己非常无助，不知道该向谁求助。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要害怕，我们可以一起寻找解决问题的办法。你并不孤单，我会一直陪伴在你身边。&quot;&#125;]&#125;</span><br><span class="line">&#123;&quot;messages&quot;: [&#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;&#125;, &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;我感到非常沮丧，觉得自己一无是处。&quot;&#125;, &#123;&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;不要过分自责，每个人都会有低谷期。尝试做自己&quot;&#125;]&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    </article>
+    <!-- license -->
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2024/04/13/IM-%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" title="浅谈IM">
+                    <div class="prevTitle">浅谈IM</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:2247769727@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/FengQingMo" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2"><span class="toc-number">1.</span> <span class="toc-text">机器人gpt部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%B8%82%E9%9D%A2%E4%B8%8A%E5%8F%AF%E7%94%A8%E7%9A%84gpt%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">选择市面上可用的gpt模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAapi-key%E4%BB%A5%E5%8F%8A%E5%BA%94%E7%94%A8"><span class="toc-number">2.1.1.</span> <span class="toc-text">创建api-key以及应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E5%8F%B3%E4%B8%8A%E8%A7%92%E7%94%A8%E6%88%B7%E5%A4%B4%E5%83%8F%E5%88%9B%E5%BB%BAapi-key"><span class="toc-number">2.1.2.</span> <span class="toc-text">点击右上角用户头像创建api_key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%BA%94%E7%94%A8%E9%80%89%E6%8B%A9RAG%E5%BA%94%E7%94%A8-%E7%84%B6%E5%90%8E%E6%8B%BF%E5%88%B0%E5%BA%94%E7%94%A8id"><span class="toc-number">2.1.3.</span> <span class="toc-text">添加应用选择RAG应用 然后拿到应用id</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%AB%AF%E4%BB%A3%E7%A0%81"><span class="toc-number">2.2.</span> <span class="toc-text">后端代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8docker%E9%83%A8%E7%BD%B2%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">2.3.</span> <span class="toc-text">使用docker部署到服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99DockerFile"><span class="toc-number">2.3.1.</span> <span class="toc-text">编写DockerFile</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#END"><span class="toc-number">2.4.</span> <span class="toc-text">END</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E6%B2%A1%E7%94%A8%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">2.5.</span> <span class="toc-text">一些没用上的数据集</span></a></li></ol></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 2
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2024 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span>
+            <a class="archive-post-title" href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/">机器人gpt部署</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span>
+            <a class="archive-post-title" href="/2024/04/13/IM-%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/">浅谈IM</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="gpt">
+                <span class="iconfont-archer">&#xe606;</span>
+                gpt
+            </span>
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="IM">
+            <span class="iconfont-archer">&#xe60a;</span>
+            IM
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="IM,">
+            <span class="iconfont-archer">&#xe60a;</span>
+            IM,
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ai,">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ai,
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://fengqingmo.github.io",
+        root: siteMetaRoot,
+        author: "风清默"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20211217"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20211217"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20211217" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

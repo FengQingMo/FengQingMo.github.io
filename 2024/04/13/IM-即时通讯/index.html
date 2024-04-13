@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="风清默">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="风清默">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="1、简介 在最近的项目中，需要实现一个聊天功能，以我目前的知识体系去实现一个简单的IM  使用的技术栈是 ：WebSocket + Redis + Mysql 其中，Mysql用来存储所有发送的消息，实现消息持久化。WebSocket可以对在线用户快速转发，Redis用来存储离线消息 IM本质上就是两件事情，消息的同步和存储：  1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈IM">
+<meta property="og:url" content="https://fengqingmo.github.io/2024/04/13/IM-%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1、简介 在最近的项目中，需要实现一个聊天功能，以我目前的知识体系去实现一个简单的IM  使用的技术栈是 ：WebSocket + Redis + Mysql 其中，Mysql用来存储所有发送的消息，实现消息持久化。WebSocket可以对在线用户快速转发，Redis用来存储离线消息 IM本质上就是两件事情，消息的同步和存储：  1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png">
+<meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/140340fo7uttmu88ulkou4.png">
+<meta property="article:published_time" content="2024-04-13T11:14:16.335Z">
+<meta property="article:modified_time" content="2024-04-13T13:26:17.172Z">
+<meta property="article:author" content="风清默">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <title>浅谈IM · 风清默的博客</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20211217" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20211217" as="style">
+    <link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="/css/mobile.css?v=20211217" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20211217" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20211217" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- Google tag (gtag.js) -->
+    
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>风清默默~</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">风清默默~</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">浅谈IM</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+    
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                浅谈IM
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="IM,"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                IM,
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+                <!-- 文章字数统计 -->
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2024/04/13</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><blockquote>
+<p>在最近的项目中，需要实现一个聊天功能，以我目前的知识体系去实现一个简单的IM</p>
+</blockquote>
+<p>使用的技术栈是 ：WebSocket + Redis + Mysql</p>
+<p>其中，Mysql用来存储所有发送的消息，实现消息持久化。WebSocket可以对在线用户快速转发，Redis用来存储离线消息</p>
+<p><strong>IM本质上就是两件事情，消息的同步和存储：</strong></p>
+<blockquote>
+<p><strong>1）消息的同步：</strong>将消息完整的、快速的从发送方传递到接收方，就是消息的同步。消息同步系统最重要的衡量指标就是消息传递的实时性、完整性以及能支撑的消息规模。从功能上来说，一般至少要支持在线和离线推送，高级的IM系统还支持『多端同步』；<br><strong>2）消息的存储：</strong>消息存储即消息的持久化保存，这里不是指消息在客户端本地的保存，而是指云端的保存，功能上对应的就是『消息漫游』。『消息漫游』的好处是可以实现账号在任意端登陆查看所有历史消息，这也是高级IM系统特有的功能之一。</p>
+</blockquote>
+<h2 id="2、相关文章"><a href="#2、相关文章" class="headerlink" title="2、相关文章"></a>2、相关文章</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31377253">现代IM系统中聊天消息的同步和存储方案探讨 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.52im.net/thread-3887-1-1.html"><strong>浅谈IM系统中离线消息、历史消息的最佳实践</strong></a></p>
+<h2 id="3、消息投递的做法"><a href="#3、消息投递的做法" class="headerlink" title="3、消息投递的做法"></a>3、消息投递的做法</h2><p>在项目中，对于实时消息、离线消息、历史消息大概是这样的技术思路。</p>
+<p><strong>不管是否在线</strong>:消息都会用Mysql存储</p>
+<p><strong>对于在线用户：</strong>消息会使用WebSocket直接实时发送到在线的接收方，消息发送完成后，</p>
+<p><strong>而对于离线的用户：</strong>服务器端会将消息存入到离线库(Redis)，当用户登录后，从离线库中将离线消息拉走，然后服务器端将离线消息删除。</p>
+<h2 id="4、历史消息的保存以及冷热分离"><a href="#4、历史消息的保存以及冷热分离" class="headerlink" title="4、历史消息的保存以及冷热分离"></a>4、历史消息的保存以及冷热分离</h2><p>历史消息存储了用户所有的聊天消息，这些消息包括发出的消息以及接收到的消息。</p>
+<p>使用Mysql保存，前端通过会话分页获取</p>
+<p>超过一定时间(此项目 4个月 根据自己业务设置)的消息数据放入<code>冷库</code>存储</p>
+<p>超过 半年的数据清除并提醒用户</p>
+<h2 id="5、离线消息的保存以及清除"><a href="#5、离线消息的保存以及清除" class="headerlink" title="5、离线消息的保存以及清除"></a>5、离线消息的保存以及清除</h2><p>因为是使用Redis存储的，众所周知Redis一般用来当缓存，比较金贵，所以不存太久</p>
+<p>过了一定时间(7天)(定时任务，每天查一次)后如果用户仍旧未上线，会清除该用户的消息缓存，但设置一个标志位，代表有离线消息，在从数据库里查。</p>
+<h2 id="6、IM离线消息、历史消息在存储逻辑上的区别-扩散写-扩散读"><a href="#6、IM离线消息、历史消息在存储逻辑上的区别-扩散写-扩散读" class="headerlink" title="6、IM离线消息、历史消息在存储逻辑上的区别(扩散写 扩散读)"></a>6、IM离线消息、历史消息在存储逻辑上的区别(扩散写 扩散读)</h2><ul>
+<li><em><strong>1）</strong></em>离线消息我们存储介质选用的是 <a target="_blank" rel="noopener" href="https://redis.io/">Redis</a>；</li>
+<li><em><strong>2）</strong></em>历史消息我们选用的是 Mysql;</li>
+</ul>
+<p>对于为什么选用不同的存储介质，其实我们考虑的是离线消息和历史消息不同的业务场景和读写模式。</p>
+<p>下面我们重点介绍一下离线消息和历史消息存储的区别。</p>
+<h3 id="6-1离线消息存储模式——“扩散写”"><a href="#6-1离线消息存储模式——“扩散写”" class="headerlink" title="6.1离线消息存储模式——“扩散写”"></a>6.1离线消息存储模式——“扩散写”</h3><p>离线消息的存储模式我们用的是扩散写。</p>
+<p><img src="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png" alt="IM开发干货分享：浅谈IM系统中离线消息、历史消息的最佳实践_2.png"></p>
+<p><em>1）</em>扩散写的缺点是：写入会被成指数地放大，特别是针对群这种场景。</p>
+<p>由于我的业务场景只有单聊，所以缺点可以避免</p>
+<h3 id="6-2-历史消息存储模式——“扩散读”"><a href="#6-2-历史消息存储模式——“扩散读”" class="headerlink" title="6.2 历史消息存储模式——“扩散读”"></a>6.2 历史消息存储模式——“扩散读”</h3><p>历史消息的存储模式我们用的是扩散读。</p>
+<p>因为历史消息中，每个会话都保存了整个会话的全量消息。<strong>在扩散读这种模式下，每个会话的消息只保存一次</strong>。</p>
+<p><img src="http://www.52im.net/data/attachment/forum/202204/18/140340fo7uttmu88ulkou4.png" alt="IM开发干货分享：浅谈IM系统中离线消息、历史消息的最佳实践_3.png"></p>
+<h2 id="7-小结"><a href="#7-小结" class="headerlink" title="7.小结"></a>7.小结</h2><p>在开发一个即时通讯（IM）系统时，消息的同步和存储是两个重要的方面。最近我在项目中实现了一个简单的聊天功能，使用了WebSocket、Redis和MySQL作为技术栈。</p>
+<p>对于消息的投递，无论用户在线与否，消息都会被存储到MySQL中。对于在线用户，消息会通过WebSocket实时发送到接收方；对于离线用户，消息会被存储到Redis中，等用户登录后再从Redis中获取。历史消息则会被保存在MySQL中，前端可以通过会话分页获取。</p>
+<p>针对历史消息，我们采用了冷热分离的策略，将超过一定时间的消息存入冷库，并定期清除超过半年的数据。对于离线消息，我们设置了一个清除策略，过了一定时间后清除用户的消息缓存，但标记用户有离线消息，并在需要时从数据库中获取。</p>
+<p>在存储逻辑上，离线消息和历史消息采用了不同的存储介质。离线消息使用了Redis，而历史消息使用了MySQL。这是因为离线消息和历史消息的业务场景和读写模式不同。离线消息采用了扩散写的模式，而历史消息采用了扩散读的模式，以更好地满足不同的业务需求。</p>
+<p>综上所述，通过合理选择存储介质和采用不同的存储模式，我们可以有效地实现消息的同步和存储，为IM系统的开发提供了一种可行的方案。</p>
+
+    </article>
+    <!-- license -->
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/" title="机器人gpt部署">
+                    <div class="nextTitle">机器人gpt部署</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:2247769727@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/FengQingMo" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">1、简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0"><span class="toc-number">2.</span> <span class="toc-text">2、相关文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E6%B6%88%E6%81%AF%E6%8A%95%E9%80%92%E7%9A%84%E5%81%9A%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">3、消息投递的做法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E5%8E%86%E5%8F%B2%E6%B6%88%E6%81%AF%E7%9A%84%E4%BF%9D%E5%AD%98%E4%BB%A5%E5%8F%8A%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB"><span class="toc-number">4.</span> <span class="toc-text">4、历史消息的保存以及冷热分离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E7%A6%BB%E7%BA%BF%E6%B6%88%E6%81%AF%E7%9A%84%E4%BF%9D%E5%AD%98%E4%BB%A5%E5%8F%8A%E6%B8%85%E9%99%A4"><span class="toc-number">5.</span> <span class="toc-text">5、离线消息的保存以及清除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81IM%E7%A6%BB%E7%BA%BF%E6%B6%88%E6%81%AF%E3%80%81%E5%8E%86%E5%8F%B2%E6%B6%88%E6%81%AF%E5%9C%A8%E5%AD%98%E5%82%A8%E9%80%BB%E8%BE%91%E4%B8%8A%E7%9A%84%E5%8C%BA%E5%88%AB-%E6%89%A9%E6%95%A3%E5%86%99-%E6%89%A9%E6%95%A3%E8%AF%BB"><span class="toc-number">6.</span> <span class="toc-text">6、IM离线消息、历史消息在存储逻辑上的区别(扩散写 扩散读)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1%E7%A6%BB%E7%BA%BF%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E2%80%9C%E6%89%A9%E6%95%A3%E5%86%99%E2%80%9D"><span class="toc-number">6.1.</span> <span class="toc-text">6.1离线消息存储模式——“扩散写”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%8E%86%E5%8F%B2%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E2%80%9C%E6%89%A9%E6%95%A3%E8%AF%BB%E2%80%9D"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 历史消息存储模式——“扩散读”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%B0%8F%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">7.小结</span></a></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 2
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2024 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span>
+            <a class="archive-post-title" href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/">机器人gpt部署</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/13</span>
+            <a class="archive-post-title" href="/2024/04/13/IM-%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/">浅谈IM</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="gpt">
+                <span class="iconfont-archer">&#xe606;</span>
+                gpt
+            </span>
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="IM">
+            <span class="iconfont-archer">&#xe60a;</span>
+            IM
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="IM,">
+            <span class="iconfont-archer">&#xe60a;</span>
+            IM,
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ai,">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ai,
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://fengqingmo.github.io",
+        root: siteMetaRoot,
+        author: "风清默"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20211217"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20211217"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20211217" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>
