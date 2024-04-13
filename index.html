@@ -449,17 +449,20 @@
                 <span class="abstract-title-text">浅谈IM</span>
             </a>
             <div class="abstract-content">
-                现代IM系统中聊天消息的同步和存储方案探讨 - 知乎 (zhihu.com)
-浅谈IM系统中离线消息、历史消息的最佳实践
-IM系统中最核心的部分是消息系统，消息系统中最核心的功能是消息的同步和存储：
+                1、简介
+在最近的项目中，需要实现一个聊天功能，以我目前的知识体系去实现一个简单的IM
 
-1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的同步。消息同步系统最重要的衡量指标就是消息传递的实时性、完整性以及能支撑的消息规模。从功能上来说，一般至少要支持在线和离线推送，高级的IM系统还支持『多端同步』；2）消息的存储：消息存储即消息的持久化保存，这里不是指消息在客户端本地的保存，而是指云端的保存，功能上对应的就是『消息漫游』。『消息漫游』的好处是可以实现账号在任...
+使用的技术栈是 ：WebSocket + Redis + Mysql
+其中，Mysql用来存储所有发送的消息，实现消息持久化。WebSocket可以对在线用户快速转发，Redis用来存储离线消息
+IM本质上就是两件事情，消息的同步和存储：
+
+1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的同步。消息同步系统最重要的衡量指标就是消息传递的实时性、完整性以及能支撑的消息规模。从功能上来说，一般至少要支持在线和离线推送，高级的IM系统还支持『多端同步』；2）消息的存储：消息存储即消息的...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2024/04/12">
+                <div class="abstract-date" title="Last updated: 2024/04/13">
                     <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2024/04/13</span>
                 </div>
                 <!-- tags -->
@@ -537,7 +540,7 @@ Run server1$ hexo ...
     <div class="profile-name">风清默</div>
     
         <div class="profile-signature">
-            几时归去,对一壶酒,一张琴
+            几时归去,对一壶酒,一张琴,一溪云
         </div>
     
     
@@ -810,6 +813,11 @@ Run server1$ hexo ...
         <span class="sidebar-category-name" data-categories="IM">
             <span class="iconfont-archer">&#xe60a;</span>
             IM
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="IM,">
+            <span class="iconfont-archer">&#xe60a;</span>
+            IM,
         </span>
     
     </div>
