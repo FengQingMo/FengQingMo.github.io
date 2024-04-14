@@ -21,15 +21,15 @@
     <meta name="description" content="">
     <meta name="description" content="1、简介 在最近的项目中，需要实现一个聊天功能，以我目前的知识体系去实现一个简单的IM  使用的技术栈是 ：WebSocket + Redis + Mysql 其中，Mysql用来存储所有发送的消息，实现消息持久化。WebSocket可以对在线用户快速转发，Redis用来存储离线消息 IM本质上就是两件事情，消息的同步和存储：  1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈IM">
-<meta property="og:url" content="https://fengqingmo.github.io/2024/04/13/IM-%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/index.html">
+<meta property="og:title" content="IM即时通讯">
+<meta property="og:url" content="https://fengqingmo.github.io/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="1、简介 在最近的项目中，需要实现一个聊天功能，以我目前的知识体系去实现一个简单的IM  使用的技术栈是 ：WebSocket + Redis + Mysql 其中，Mysql用来存储所有发送的消息，实现消息持久化。WebSocket可以对在线用户快速转发，Redis用来存储离线消息 IM本质上就是两件事情，消息的同步和存储：  1）消息的同步：将消息完整的、快速的从发送方传递到接收方，就是消息的">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png">
 <meta property="og:image" content="http://www.52im.net/data/attachment/forum/202204/18/140340fo7uttmu88ulkou4.png">
-<meta property="article:published_time" content="2024-04-13T11:14:16.335Z">
-<meta property="article:modified_time" content="2024-04-13T13:26:17.172Z">
+<meta property="article:published_time" content="2024-04-14T03:11:31.000Z">
+<meta property="article:modified_time" content="2024-04-14T03:11:50.386Z">
 <meta property="article:author" content="风清默">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://www.52im.net/data/attachment/forum/202204/18/123123edit9i9s9astwlfq.png">
@@ -37,7 +37,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="icon" href="/assets/favicon.ico">
     
-    <title>浅谈IM · 风清默的博客</title>
+    <title>IM即时通讯 · 风清默的博客</title>
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
 - testing support for link[rel=preload]
@@ -263,7 +263,7 @@
                 <a href="/">风清默默~</a>
             </div>
             <div class="post-title header-element">
-                <a href="#" class="post-name">浅谈IM</a>
+                <a href="#" class="post-name">IM即时通讯</a>
             </div>
         </div>
     
@@ -309,7 +309,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-                浅谈IM
+                IM即时通讯
             <!-- 404 -->
             
         </h1>
@@ -328,18 +328,6 @@
                 
                     <div class= post-intro-tags >
     
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="IM,"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                IM,
-            </span>
-        </span>
-    
     
 </div>
 
@@ -349,7 +337,7 @@
                 <div class="post-intro-meta">
                     <!-- 撰写日期 -->
                     <span class="iconfont-archer post-intro-calander">&#xe676;</span>
-                    <span class="post-intro-time">2024/04/13</span>
+                    <span class="post-intro-time">2024/04/14</span>
                     <!-- busuanzi -->
                     
                         <span id="busuanzi_container_page_pv" class="busuanzi-pv">
@@ -551,13 +539,13 @@
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/" title="机器人gpt部署">
-                    <div class="nextTitle">机器人gpt部署</div>
-                </a>
-            
         </li>
         <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/" title="机器人gpt部署">
+                    <div class="prevTitle">机器人gpt部署</div>
+                </a>
             
         </li>
     </ul>
@@ -682,23 +670,6 @@
         </div>
         <!-- toc -->
         
-            <div class="toc-wrapper toc-wrapper-loding" style=
-
-
-
-
-
-
-
-    top:50vh;
-
->
-                <div class="toc-catalog">
-                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
-                </div>
-                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">1、简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0"><span class="toc-number">2.</span> <span class="toc-text">2、相关文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E6%B6%88%E6%81%AF%E6%8A%95%E9%80%92%E7%9A%84%E5%81%9A%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">3、消息投递的做法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E5%8E%86%E5%8F%B2%E6%B6%88%E6%81%AF%E7%9A%84%E4%BF%9D%E5%AD%98%E4%BB%A5%E5%8F%8A%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB"><span class="toc-number">4.</span> <span class="toc-text">4、历史消息的保存以及冷热分离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E7%A6%BB%E7%BA%BF%E6%B6%88%E6%81%AF%E7%9A%84%E4%BF%9D%E5%AD%98%E4%BB%A5%E5%8F%8A%E6%B8%85%E9%99%A4"><span class="toc-number">5.</span> <span class="toc-text">5、离线消息的保存以及清除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81IM%E7%A6%BB%E7%BA%BF%E6%B6%88%E6%81%AF%E3%80%81%E5%8E%86%E5%8F%B2%E6%B6%88%E6%81%AF%E5%9C%A8%E5%AD%98%E5%82%A8%E9%80%BB%E8%BE%91%E4%B8%8A%E7%9A%84%E5%8C%BA%E5%88%AB-%E6%89%A9%E6%95%A3%E5%86%99-%E6%89%A9%E6%95%A3%E8%AF%BB"><span class="toc-number">6.</span> <span class="toc-text">6、IM离线消息、历史消息在存储逻辑上的区别(扩散写 扩散读)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1%E7%A6%BB%E7%BA%BF%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E2%80%9C%E6%89%A9%E6%95%A3%E5%86%99%E2%80%9D"><span class="toc-number">6.1.</span> <span class="toc-text">6.1离线消息存储模式——“扩散写”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%8E%86%E5%8F%B2%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F%E2%80%94%E2%80%94%E2%80%9C%E6%89%A9%E6%95%A3%E8%AF%BB%E2%80%9D"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 历史消息存储模式——“扩散读”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%B0%8F%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">7.小结</span></a></li></ol>
-            </div>
-        
         <!-- sidebar -->
         <div class="sidebar sidebar-hide">
     <ul class="sidebar-tabs sidebar-tabs-active-0">
@@ -745,14 +716,14 @@
             
         
         <li class="archive-post-item">
-            <span class="archive-post-date">04/13</span>
-            <a class="archive-post-title" href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/">机器人gpt部署</a>
+            <span class="archive-post-date">04/14</span>
+            <a class="archive-post-title" href="/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/">IM即时通讯</a>
         </li>
     
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/13</span>
-            <a class="archive-post-title" href="/2024/04/13/IM-%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/">浅谈IM</a>
+            <a class="archive-post-title" href="/2024/04/13/%E6%9C%BA%E5%99%A8%E4%BA%BAgpt%E9%83%A8%E7%BD%B2/">机器人gpt部署</a>
         </li>
     
     </div>
